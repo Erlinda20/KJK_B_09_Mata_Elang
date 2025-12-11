@@ -1,4 +1,4 @@
-# Deteksi Serangan Menggunakan IDS Suricata/Snort
+# Deteksi Serangan Menggunakan IDS Suricata
 
 ### Anggota Kelompok 9 
 | No | Nama                                       | NRP         |
@@ -11,6 +11,23 @@
 
 
 ### Posisi IDS dan Alasan
+IDS dipasang di pfSense dengan beberapa alasan :
+1. Semua trafik lintas subnet lewat pfSense
+2. Tidak perlu memasang IDS di setiap subnet (hemat resource)
+3. Bisa menangkap Nmap SYN scan, SSH brute force, HTTP file transfer
 
 ### Konfigurasi
+
+
+### Custome Rules
+a. Rule Port Scanning
+Subnet Mahais
+
+
+### Simulasi Serangan
+
+
+### Analisis Singkat
+
+### Kesimpulan
 
