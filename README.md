@@ -8,7 +8,7 @@
 | 3  | Yasykur Khalis Jati Maulana Yuwono          | 5027241112  |
 | 4  | Zahra Hafizhah                              | 5027241121  |
 
-
+![topologi](images/topologi.png)
 
 ### Posisi IDS dan Alasan
 IDS dipasang di pfSense dengan beberapa alasan :
