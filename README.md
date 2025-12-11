@@ -1,7 +1,7 @@
 # Deteksi Serangan Menggunakan IDS Suricata
 
 ### Anggota Kelompok 9 
-| No | Nama                                       | NRP         |
+| No | Nama                                        | NRP         |
 |----|---------------------------------------------|-------------|
 | 1  | Mohammad Abyan Ranuaji                      | 5027241106  |
 | 2  | Erlinda Annisa Zahra                        | 5027241108  |
@@ -17,8 +17,17 @@ IDS dipasang di pfSense dengan beberapa alasan :
 3. Bisa menangkap Nmap SYN scan, SSH brute force, HTTP file transfer
 
 ### Konfigurasi
+IDS ditempatkan pada pdSense1, memanfaatkan kemampuan inline untuk memantau lalu lintas pada titik kritis jaringan
+|Interface | IP Address            | Keterangan Jaringan             | 
+| em1      | 10.20.254.2/30        | Menghubungkan ke EdgeRouter     |
+| em3      | 10.20.100.1/30        | Menghubungkan ke RouteEksternal |
+| em2      | 10.20.200.1/30        | Menghubungkan ke RouterInternal |
 
-
+Variabel lingkungan didefinisikan untuk membedakan secara jelas antara jaringan internal yang dilindungi ($HOME\_NET$) dan jaringan eksternal ($EXTERNAL\_NET$)
+| Variabel       | Definisi                                                                                       | 
+| HOME_NET       | 10.20.10.0/24, 10.20.20.0/24, 10.20.30.0/24, 10.20.40.0/24, 10.20.50.0/24                      | 
+| EXTERNAL_NET   | !$HOME_NET (atau any jika diimplementasi sebagai interface WAN)                                | 
+| $DNS\_SERVERS$ | Diset ke IP DNS Internal/Eksternal yang digunakan (misalnya 8.8.8.8, 1.1.1.1 atau IP internal) | 
 ### Custome Rules
 a. Rule Port Scanning
 Subnet Mahasiswa = 10.20.10.0/24
